@@ -1,5 +1,3 @@
-
-
 set nowrap
 set number
 set hlsearch
@@ -9,7 +7,7 @@ filetype off                  " required
 call plug#begin('~/.vim/plugged')
 " Specify a directory for plugins call plug#begin('~/.vim/plugged')
 
-Plug 'python-mode/python-mode'
+Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
 Plug 'tmhedberg/SimpylFold'
 Plug 'vim-scripts/indentpython.vim'
 Plug 'scrooloose/nerdtree'
@@ -18,11 +16,15 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'plasticboy/vim-markdown'
 Plug 'mgedmin/coverage-highlight.vim'
 Plug 'vim-scripts/mako.vim'
-Plug 'vim-scripts/vim-auto-save'
 Plug 'tell-k/vim-autopep8'
 Plug 'liuchengxu/space-vim-dark'
-Plug 'neovimhaskell/haskell-vim'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'vim-scripts/vim-auto-save'
+Plug 'evanleck/vim-svelte', {'branch': 'main'}
+
+" Haskell
+Plug 'neovimhaskell/haskell-vim'
+
 " To be removed
 "Plug 'kien/ctrlp.vim'
 "Plug 'jistr/vim-nerdtree-tabs'
@@ -30,14 +32,37 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 "Plug 'itchyny/lightline.vim'
 "
 " Front-end related plugins:
-"Plug 'posva/vim-vue'
+Plug 'posva/vim-vue'
 "Plug 'mattn/emmet-vim'
 "Plug 'valloric/matchtagalways'
+
+" Ocaml
+"Plug 'scrooloose/syntastic'
+"Plug 'def-lkb/merlin'
+"Plug 'jpalardy/vim-slime'
+"Plug 'OCamlPro/ocp-indent'
 
 call plug#end()
 
 syntax on
 filetype plugin indent on    " required
+
+" You can use the 'formatoptions' option  to influence how Vim formats text.
+" 'formatoptions' is a string that can contain any of the letters below.  The
+" default setting is "tcq".  You can separate the option letters with commas for
+" readability.
+" 
+" letter  meaning when present in 'formatoptions'
+" 
+" t       Auto-wrap text using textwidth
+" c       Auto-wrap comments using textwidth, inserting the current comment
+"         leader automatically.
+" r       Automatically insert the current comment leader after hitting
+"         <Enter> in Insert mode.
+" o       Automatically insert the current comment leader after hitting 'o' or
+"         'O' in Normal mode.
+" https://stackoverflow.com/questions/6076592/vim-set-formatoptions-being-lost
+autocmd BufNewFile,BufRead * setlocal formatoptions-=cro
 
 " Using system's clipboard
 set clipboard=unnamed
@@ -71,7 +96,7 @@ set cindent
 set noexpandtab
 set shiftwidth=4   
  
-" PEP8
+" Python, PEP8
 au BufNewFile,BufRead *.py  
     \ setlocal tabstop=4 |
     \ setlocal softtabstop=4 |
@@ -80,29 +105,6 @@ au BufNewFile,BufRead *.py
     \ setlocal expandtab |
     \ setlocal autoindent |
     \ setlocal fileformat=unix
-
-" yml
-au BufReadPost *.yml set syntax=yaml
-au BufNewFile,BufRead *.yml,*.yaml
-    \ setlocal tabstop=2 |
-    \ setlocal softtabstop=2 |
-    \ setlocal shiftwidth=2 |
-    \ setlocal textwidth=99 |
-	\ setlocal colorcolumn=99 |
-    \ setlocal expandtab |
-    \ setlocal autoindent |
-
-
-" js, css , HTML
-au BufReadPost *.mak set syntax=html
-au BufNewFile,BufRead *.js,*.html,*.css,*.vue
-    \ setlocal tabstop=2 |
-    \ setlocal softtabstop=2 |
-    \ setlocal shiftwidth=2 |
-    \ setlocal textwidth=99 |
-	\ setlocal colorcolumn=99 |
-    \ setlocal expandtab |
-    \ setlocal autoindent |
 
 " c
 set cindent
@@ -115,15 +117,61 @@ au BufRead,BufNewFile *.c,*.h
     \ setlocal expandtab |
     \ setlocal fileformat=unix
 
+" yml
+au BufReadPost *.yml set syntax=yaml
+au BufNewFile,BufRead *.yml,*.yaml
+    \ setlocal tabstop=2 |
+    \ setlocal softtabstop=2 |
+    \ setlocal shiftwidth=2 |
+    \ setlocal textwidth=79 |
+	\ setlocal colorcolumn=79 |
+    \ setlocal expandtab |
+    \ setlocal autoindent |
+
+" vim -b : edit binary using xxd-format!
+augroup Binary
+  au!
+  au BufReadPre  *.bin,*.pcap let &bin=1
+  au BufReadPost *.bin,*.pcap if &bin | %!xxd
+  au BufReadPost *.bin,*.pcap set ft=xxd | endif
+  au BufWritePre *.bin,*.pcap if &bin | %!xxd -r
+  au BufWritePre *.bin,*.pcap endif
+  au BufWritePost *.bin,*.pcap if &bin | %!xxd
+  au BufWritePost *.bin,*.pcap set nomod | endif
+augroup END
+
+" js, css , HTML, Markdown
+au BufReadPost *.mak set syntax=html
+au BufNewFile,BufRead *.md,*.js,*.json,*.html,*.css,*.vue,*.svelte
+    \ setlocal tabstop=2 |
+    \ setlocal softtabstop=2 |
+    \ setlocal shiftwidth=2 |
+    \ setlocal textwidth=79 |
+	\ setlocal colorcolumn=79 |
+    \ setlocal expandtab |
+    \ setlocal autoindent |
+
 " haskell
-au BufRead,BufNewFile *.hs
-    \ setlocal tabstop=4 |
-    \ setlocal softtabstop=4 |
-    \ setlocal shiftwidth=4 |
+au BufRead,BufNewFile *.hs,*.cabal
+    \ setlocal tabstop=2 |
+    \ setlocal softtabstop=2 |
+    \ setlocal shiftwidth=2 |
     \ setlocal textwidth=79 |
     \ setlocal autoindent |
     \ setlocal expandtab |
     \ setlocal fileformat=unix
+
+" shell
+au BufReadPost *.sh set syntax=bash
+au BufNewFile,BufRead *.sh,*.sh
+    \ setlocal tabstop=2 |
+    \ setlocal softtabstop=2 |
+    \ setlocal shiftwidth=2 |
+    \ setlocal textwidth=79 |
+	\ setlocal colorcolumn=79 |
+    \ setlocal expandtab |
+    \ setlocal autoindent |
+
 
 let g:haskell_enable_quantification = 1   " to enable highlighting of `forall`
 let g:haskell_enable_recursivedo = 1      " to enable highlighting of `mdo` and `rec`
@@ -135,7 +183,7 @@ let g:haskell_backpack = 1                " to enable highlighting of backpack k
 let g:haskell_classic_highlighting = 0
 
 " Other (miscellaneous)
-au BufRead,BufNewFile *.md,*.txt,*.rst
+au BufRead,BufNewFile *.txt,*.rst
     \ setlocal tabstop=4 |
     \ setlocal softtabstop=4 |
     \ setlocal shiftwidth=4 |
@@ -149,7 +197,26 @@ let g:ycm_autoclose_preview_window_after_completion=1
 "map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 " ignore files in NERDTree
-let NERDTreeIgnore=['^data$', '\.pyc$', '\~$', '^__pycache__$', '\.egg-info$', '^build$', '^dist$', '\.so$', '\.o$'] 
+let NERDTreeIgnore = [
+			\ '^data$', 
+			\ '\.pyc$',
+			\ '\~$', 
+			\ '^__pycache__$', 
+			\ '\.egg-info', 
+			\ '^build$', 
+			\ '^_build', 
+			\ '^dist$', 
+			\ '\.so$', 
+			\ '\.o$', 
+			\ '^obj',
+			\ '^node_modules',
+			\ '^package-lock.json',
+			\ '\.gcno',
+			\ '\.gcda',
+			\ '\.gcov',
+			\ '^dist-newstyle$',
+			\ '^cabal.project.local$',
+			\ ] 
 
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
@@ -174,7 +241,7 @@ fun! NoseTestCurrentScope()
     call winrestview(l:save)
 endfun
 
-let test#python#runner = 'nose2'
+let test#python#runner = 'pytest'
 
 
 fun! PyTestCurrentScope()
@@ -235,25 +302,19 @@ let g:pymode_python = 'python3'
 " Rope
 let g:pymode_rope = 1
 
-" Lint
-" Lint is activated to fix pep8 errors
-let g:pymode_lint = 1
-let g:pymode_lint_on_write = 1
-let g:pymode_lint_checkers = ['pep8', 'pep257']
-
 "change parameters to open go to definition in vertical splited window
 "possible parameters are 'e', 'new', 'vnew
 let g:pymode_rope_goto_definition_cmd = 'new'
 let g:pymode_rope_organize_imports_bind = '<Leader>q'
 let g:pymode_rope_lookup_project = 0
 let g:pymode_rope_completion = 1
-let g:pymode_rope_complete_on_dot = 1
+let g:pymode_rope_complete_on_dot = 0
 let g:pymode_rope_autoimport = 1
 let g:pymode_rope_rename_bind = '<C-c>rr'
 
 set completeopt=longest,menuone
-let ropevim_vim_completion=1
-let ropevim_extended_complete=1
+let ropevim_vim_completion = 1
+let ropevim_extended_complete = 1
 map <C-]> <C-C>g
 map <Leader>i <C-c>ro
 
@@ -267,11 +328,13 @@ vnoremap <silent> # :s/^/#/<cr>:noh<cr>
 vnoremap <silent> -# :s/^#//<cr>:noh<cr>
 
 nnoremap <Leader>c :HighlightCoverage<CR>
+nnoremap <Leader>d :HighlightCoverageOff<CR>
 autocmd FileType python nnoremap <buffer> <F9> :write<cr> :exec '!python3' shellescape(@%, 1)<cr>
 autocmd FileType python nnoremap <buffer> <F8> :write<cr> :exec '!pytest -vvv' shellescape(@%, 1)<cr>
 autocmd FileType python nnoremap <buffer> <F7> :write<cr> :exec '!P=`basename $(pwd)`; py.test --cov=$P tests'<cr>
+autocmd FileType python nnoremap <buffer> <F10> :write<cr> :exec '!P=`basename $(pwd)`; py.test --cov=$P 'shellescape(@%, 1)<cr>
 "autocmd FileType python nnoremap <buffer> <F7> :write<cr> :exec '!P=`basename $(pwd)`; py.test --cov=$P $P/tests'<cr>
-noremap <F10> :write<cr> :exec '!coverage run --source $(python3 -c "from setuptools import find_packages; print(find_packages()[0])") $(which nosetests)'<cr>
+"noremap <F10> :write<cr> :exec '!coverage run --source $(python3 -c "from setuptools import find_packages; print(find_packages()[0])") $(which nosetests)'<cr>
 
 " autocmd FileType python,*.pyx nnoremap <Leader>B :exec '!python setup.py build_ext --force --inplace --define=CYTHON_TRACE'<cr>
 nnoremap <Leader>B  :write<cr> :exec '!python3 setup.py build_ext --force --inplace --define=CYTHON_TRACE'<cr>
@@ -280,10 +343,10 @@ nnoremap <Leader>f  :write<cr> :exec '!make flash'<cr>
 autocmd FileType python,*.pyx nnoremap <Leader>l :PymodeLintAuto <cr>
 autocmd Filetype python,*.pyx nnoremap <Leader>8 :Autopep8 <cr>
 
-let g:auto_save = 1  " enable AutoSave on Vim startup
-let g:auto_save_no_updatetime = 1  " do not change the 'updatetime' option
-let g:auto_save_in_insert_mode = 0  " do not save while in insert mode
-autocmd InsertLeave * write
+"let g:auto_save = 1  " enable AutoSave on Vim startup
+"let g:auto_save_no_updatetime = 1  " do not change the 'updatetime' option
+"let g:auto_save_in_insert_mode = 0  " do not save while in insert mode
+"autocmd InsertLeave * write
 
 set t_Co=256
 
@@ -308,7 +371,7 @@ let NERDTreeAutoDeleteBuffer = 1
 map <C-n> :NERDTreeToggle<CR>
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-let g:NERDTreeWinSize=22
+let g:NERDTreeWinSize=24
 
 " Vim slow scrolling
 set lazyredraw
@@ -324,7 +387,19 @@ nnoremap <C-t> <esc>:tabnew<CR>
 " Close current tab
 nnoremap <C-y> <esc>:tabclose<CR>
 
+" Disable F1 and map it to esc
+map <F1> <Esc>
+imap <F1> <Esc>
+
+
+" Saved macros
+let @d = '0f/xxxiCHK("€ýaf*hxxxa");€ýa'
+let @c = '0fC5xi/* lf"d$a */€ýa'
 " Using local config. Uncomment line below. 
 "source ~/.vimrc-local
 
+" https://stackoverflow.com/questions/19320747/prevent-vim-from-indenting-line-when-typing-a-colon-in-python
+autocmd FileType python setlocal indentkeys-=<:>
+autocmd FileType python setlocal indentkeys-=:
 
+let g:pymode_lint = 0
