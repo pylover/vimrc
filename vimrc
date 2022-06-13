@@ -18,12 +18,12 @@ Plug 'mgedmin/coverage-highlight.vim'
 Plug 'vim-scripts/mako.vim'
 Plug 'tell-k/vim-autopep8'
 Plug 'liuchengxu/space-vim-dark'
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'vim-scripts/vim-auto-save'
 Plug 'evanleck/vim-svelte', {'branch': 'main'}
+Plug 'prettier/vim-prettier', { 'do': 'npm install' }
 
 " Haskell
-Plug 'neovimhaskell/haskell-vim'
+" Plug 'neovimhaskell/haskell-vim'
 
 " To be removed
 "Plug 'kien/ctrlp.vim'
@@ -31,11 +31,6 @@ Plug 'neovimhaskell/haskell-vim'
 "Plug 'godlygeek/tabular'
 "Plug 'itchyny/lightline.vim'
 "
-" Front-end related plugins:
-Plug 'posva/vim-vue'
-"Plug 'mattn/emmet-vim'
-"Plug 'valloric/matchtagalways'
-
 " Ocaml
 "Plug 'scrooloose/syntastic'
 "Plug 'def-lkb/merlin'
@@ -108,7 +103,7 @@ au BufNewFile,BufRead *.py
 
 " c
 set cindent
-au BufRead,BufNewFile *.c,*.h
+au BufRead,BufNewFile *.c,*.h,*.in
     \ setlocal tabstop=4 |
     \ setlocal softtabstop=4 |
     \ setlocal shiftwidth=4 |
@@ -311,6 +306,8 @@ let g:pymode_rope_completion = 1
 let g:pymode_rope_complete_on_dot = 0
 let g:pymode_rope_autoimport = 1
 let g:pymode_rope_rename_bind = '<C-c>rr'
+let g:pymode_rope = 0
+let g:pymode_rope_regenerate_on_write = 0
 
 set completeopt=longest,menuone
 let ropevim_vim_completion = 1
@@ -371,7 +368,7 @@ let NERDTreeAutoDeleteBuffer = 1
 map <C-n> :NERDTreeToggle<CR>
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-let g:NERDTreeWinSize=24
+let g:NERDTreeWinSize=22
 
 " Vim slow scrolling
 set lazyredraw
@@ -393,8 +390,8 @@ imap <F1> <Esc>
 
 
 " Saved macros
-let @d = '0f/xxxiCHK("€ýaf*hxxxa");€ýa'
-let @c = '0fC5xi/* lf"d$a */€ýa'
+let @d = '0f/xxxiCHK("ï¿½ï¿½af*hxxxa");ï¿½ï¿½a'
+let @c = '0fC5xi/* lf"d$a */ï¿½ï¿½a'
 " Using local config. Uncomment line below. 
 "source ~/.vimrc-local
 
@@ -403,3 +400,13 @@ autocmd FileType python setlocal indentkeys-=<:>
 autocmd FileType python setlocal indentkeys-=:
 
 let g:pymode_lint = 0
+
+" Svelte
+let g:vim_svelte_plugin_use_sass=1
+let g:vim_svelte_plugin_has_init_indent=1
+let g:vim_svelte_plugin_load_full_syntax=1 
+
+" Prettier Settings
+let g:prettier#quickfix_enabled = 0
+let g:prettier#autoformat_require_pragma = 0
+au BufWritePre *.css,*.svelte,*.pcss,*.html,*.ts,*.js,*.json PrettierAsync
