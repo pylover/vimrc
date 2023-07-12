@@ -15,10 +15,8 @@ Plug 'python-rope/ropevim'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'plasticboy/vim-markdown'
 Plug 'mgedmin/coverage-highlight.vim'
-Plug 'vim-scripts/mako.vim'
 Plug 'tell-k/vim-autopep8'
 Plug 'liuchengxu/space-vim-dark'
-Plug 'vim-scripts/vim-auto-save'
 Plug 'evanleck/vim-svelte', {'branch': 'main'}
 Plug 'prettier/vim-prettier', { 'do': 'npm install' }
 
@@ -216,6 +214,7 @@ let NERDTreeIgnore = [
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
 let g:NERDTreeGitStatusShowIgnored = 1
+let g:NERDTreeMinimalMenu=1
 
 fun! NoseTestCurrentScope()
     " Find function under cursor
@@ -410,3 +409,11 @@ let g:vim_svelte_plugin_load_full_syntax=1
 let g:prettier#quickfix_enabled = 0
 let g:prettier#autoformat_require_pragma = 0
 au BufWritePre *.css,*.svelte,*.pcss,*.html,*.ts,*.js,*.json PrettierAsync
+
+" Remove trailing whitespaces
+fun! TrimWhitespace()
+    let l:save = winsaveview()
+    keeppatterns %s/\s\+$//e
+    call winrestview(l:save)
+endfun
+autocmd BufWritePre *.c,*.h,*.py call TrimWhitespace()
