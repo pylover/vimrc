@@ -389,8 +389,8 @@ imap <F1> <Esc>
 
 
 " Saved macros
-let @d = '0f/xxxiCHK("ï¿½ï¿½af*hxxxa");ï¿½ï¿½a'
-let @c = '0fC5xi/* lf"d$a */ï¿½ï¿½a'
+let @d = '0f/xxxiCHK("€ýaf*hxxxa");€ýa'
+let @c = '0fC5xi/* lf"d$a */€ýa'
 " Using local config. Uncomment line below. 
 "source ~/.vimrc-local
 
@@ -410,10 +410,21 @@ let g:prettier#quickfix_enabled = 0
 let g:prettier#autoformat_require_pragma = 0
 au BufWritePre *.css,*.svelte,*.pcss,*.html,*.ts,*.js,*.json PrettierAsync
 
-" Remove trailing whitespaces
 fun! TrimWhitespace()
     let l:save = winsaveview()
     keeppatterns %s/\s\+$//e
     call winrestview(l:save)
 endfun
+
+" Remove trailing whitespaces
 autocmd BufWritePre *.c,*.h,*.py call TrimWhitespace()
+
+" Editor command aliases:
+" cnoreabbrev <expr> W ((getcmdtype() is# ':' && getcmdline() is# 'W')?('w'):('W'))
+fun! SetupCommandAlias(from, to)
+  exec 'cnoreabbrev <expr> '.a:from
+        \ .' ((getcmdtype() is# ":" && getcmdline() is# "'.a:from.'")'
+        \ .'? ("'.a:to.'") : ("'.a:from.'"))'
+endfun
+call SetupCommandAlias("W","w")
+call SetupCommandAlias("Wa","wa")
